@@ -1,0 +1,21 @@
+﻿#map {
+    position: absolute;
+    top: 120px;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 1;
+}
+
+.awesomplete {
+    width: 80%;
+    z-index: 2;
+}
+
+#address{
+    width: 100%;
+}
+
+input {
+    display: inline-block;
+}

@@ -1,0 +1,33 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "provider": "unpkg",
+      "library": "leaflet@1.6.0",
+      "destination": "lib/leaflet/",
+      "files": [
+        "dist/leaflet.js",
+        "dist/leaflet.css",
+        "dist/images/*.*"
+      ]
+    },
+    {
+      "provider": "cdnjs",
+      "library": "jquery@3.5.1",
+      "destination": "lib/jquery/",
+      "files": [
+        "jquery.min.js"
+      ]
+    },
+    {
+      "provider": "cdnjs",
+      "library": "awesomplete@1.1.5",
+      "destination": "lib/awesomplete",
+      "files": [
+        "awesomplete.min.css",
+        "awesomplete.min.js"
+      ]
+    }
+  ]
+}
