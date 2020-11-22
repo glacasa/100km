@@ -20,11 +20,12 @@ function setView(point, zoom) {
     map.setView([point.lat, point.lon], zoom);
 }
 
-function display100km(point) {
+function displayNkm(point) {
     clearMap();
     let marker = L.marker([point.latitude, point.longitude]).addTo(map);
     layers.push(marker);
-    let circle = L.circle([point.latitude, point.longitude], 100000).addTo(map);
+    let dist = document.getElementById("distance").value;
+    let circle = L.circle([point.latitude, point.longitude], dist*1000).addTo(map);
     layers.push(circle);
     map.fitBounds(circle.getBounds());
 }
@@ -76,7 +77,7 @@ function initAutocomplete() {
         evt.text.value = evt.text.label;
 
         var point = { latitude: coordinates[1], longitude: coordinates[0], nom: evt.text.label };
-        display100km(point);
+        displayNkm(point);
     });
 
 
@@ -110,7 +111,7 @@ function initAutocomplete() {
             if (result && result.features && result.features.length) {
                 var coordinates = result.features[0].geometry.coordinates;
                 var point = { latitude: coordinates[1], longitude: coordinates[0], nom: search };
-                display100km(point);
+                displayNkm(point);
             }
         });
     }
