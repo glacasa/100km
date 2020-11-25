@@ -30,6 +30,21 @@ function displayNkm(point) {
     map.fitBounds(circle.getBounds());
 }
 
+function displayNkm(point1, point2) {
+    clearMap();
+    let marker = L.marker([point1.latitude, point1.longitude]).addTo(map);
+    layers.push(marker);
+    let dist = document.getElementById("distance").value;
+    let circle = L.circle([point1.latitude, point1.longitude], dist*1000).addTo(map);
+    layers.push(circle);
+
+    let marker2 = L.marker([point2.latitude, point2.longitude]).addTo(map);
+    layers.push(marker2);
+    let circle2 = L.circle([point2.latitude, point2.longitude], dist*1000).addTo(map);
+    layers.push(circle2);
+    map.fitBounds(circle.getBounds());
+}
+
 function clearMap() {
     for (let i = 0; i < layers.length; i++) {
         map.removeLayer(layers[i]);
@@ -70,9 +85,19 @@ function delay(callback, ms) {
 
 function initAutocomplete() {
     var addressInput = document.getElementById("address");
+    var address2Input = document.getElementById("address2");
     var searchButton = document.getElementById("search");
-    var adressComplete = new Awesomplete(addressInput, { list: [] });
+    var addressComplete = new Awesomplete(addressInput, { list: [] });
+    var addressComplete2 = new Awesomplete(address2Input, { list: [] });
     addressInput.addEventListener("awesomplete-select", function (evt) {
+        var coordinates = evt.text.value;
+        evt.text.value = evt.text.label;
+
+        var point = { latitude: coordinates[1], longitude: coordinates[0], nom: evt.text.label };
+        displayNkm(point);
+    });
+    
+    address2Input.addEventListener("awesomplete-select", function (evt) {
         var coordinates = evt.text.value;
         evt.text.value = evt.text.label;
 
@@ -101,17 +126,52 @@ function initAutocomplete() {
                 }
             }
 
-            adressComplete.list = addresses;
+            addressComplete.list = addresses;
+        });
+    }
+    
+    function onAddress2Change() {
+        var search = address2Input.value;
+        if (!search) {
+            document.getElementById("addressAutocomplete").innerHTML = "";
+            return;
+        }
+
+        searchAddress(search, function (result) {
+            var addresses = [];
+            if (result && result.features && result.features.length) {
+                for (var i = 0; i < result.features.length; i++) {
+                    var feature = result.features[i];
+                    addresses.push({
+                        label: feature.properties.label,
+                        value: feature.geometry.coordinates,
+                    });
+                }
+            }
+
+            addressComplete2.list = addresses;
         });
     }
 
     function onSearch() {
         var search = addressInput.value;
+        var search2 = address2Input.value;
         searchAddress(search, function (result) {
             if (result && result.features && result.features.length) {
                 var coordinates = result.features[0].geometry.coordinates;
                 var point = { latitude: coordinates[1], longitude: coordinates[0], nom: search };
-                displayNkm(point);
+                if( search2 )
+                {
+                    searchAddress(search2, function (result2) {
+                        var coordinates = result2.features[0].geometry.coordinates;
+                        var point2 = { latitude: coordinates[1], longitude: coordinates[0], nom: search };
+                        displayNkm(point, point2);
+                    });
+                }
+                else
+                {
+                    displayNkm(point);
+                }
             }
         });
     }
@@ -119,7 +179,16 @@ function initAutocomplete() {
     addressInput.oninput = delay(onAddressChange, 200);
     addressInput.onkeypress = function (e) {
         if (e.keyCode == 13) {
-            // Touche Entrée, on lance la recherche
+            // Touche Entrï¿½e, on lance la recherche
+            abortPendingXhr();
+            onSearch();
+        }
+    };
+
+    address2Input.oninput = delay(onAddress2Change, 200);
+    address2Input.onkeypress = function (e) {
+        if (e.keyCode == 13) {
+            // Touche Entrï¿½e, on lance la recherche
             abortPendingXhr();
             onSearch();
         }
@@ -127,7 +196,7 @@ function initAutocomplete() {
     searchButton.onclick = function () {
         abortPendingXhr();
         onSearch();
-    }
+    };
 }
 
 // Initialisation

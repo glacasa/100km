@@ -1,6 +1,6 @@
 ﻿#map {
     position: absolute;
-    top: 120px;
+    top: 160px;
     left: 0;
     bottom: 0;
     right: 0;
@@ -13,6 +13,9 @@
 }
 
 #address{
+    width: 99%;
+}
+#address2{
     width: 99%;
 }
 
